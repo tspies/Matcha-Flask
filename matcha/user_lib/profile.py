@@ -5,13 +5,17 @@ from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 
 from matcha import mail
+from .history import log_history_moment
 
 
-def query_db(query, args=(), one=False):
+def query_db(query, args=(), commit=False, one=False):
     cur = g.db.execute(query, args)
-    rv = [dict((cur.description[idx][0], value)
-               for idx, value in enumerate(row)) for row in cur.fetchall()]
-    return (rv[0] if rv else None) if one else rv
+    if commit:
+        g.db.commit()
+    else:
+        rv = [dict((cur.description[idx][0], value)
+                   for idx, value in enumerate(row)) for row in cur.fetchall()]
+        return (rv[0] if rv else None) if one else rv
 
 
 def user_lib_validate_profile_update_form(form, user, post_form_interests, pictures):
@@ -31,7 +35,7 @@ def user_lib_validate_profile_update_form(form, user, post_form_interests, pictu
 
     if not form.username.data == user['username']:
         new_username = True
-        username = query_db("SELECT * FROM users WHERE username = ?", (form.username.data,), True)
+        username = query_db("SELECT * FROM users WHERE username = ?", (form.username.data,), False, True)
         if username:
             flash("That username is already in use, please choose another one.", 'danger')
             return render_template("profile_update.html",  form=form, user=user)
@@ -39,7 +43,7 @@ def user_lib_validate_profile_update_form(form, user, post_form_interests, pictu
     if not form.email.data == user['email']:
         new_email = True
         if re.search("@", form.email.data):
-            email = query_db("SELECT * FROM users WHERE email = ?", (form.email.data,), True)
+            email = query_db("SELECT * FROM users WHERE email = ?", (form.email.data,), False, True)
             if email:
                 flash("That email is already in in use, plese choose another one.", 'danger')
                 return render_template("profile_update.html",  form=form, user=user)
@@ -48,51 +52,48 @@ def user_lib_validate_profile_update_form(form, user, post_form_interests, pictu
             return render_template("profile_update.html", form=form, user=user)
 
     if new_username and new_email:
-        query_db("UPDATE users SET username=?, email=?, gender=?, sex_orientation=? WHERE username=?", (form.username.data, form.email.data, form.gender.data, form.sex_orientation.data, user['username']))
-        g.db.commit()
-        query_db("UPDATE interests SET username=? WHERE username=?", (form.username.data, session['username']))
-        g.db.commit()
+        query_db("UPDATE users SET username=?, email=?, gender=?, sex_orientation=? WHERE username=?",
+                 (form.username.data, form.email.data, form.gender.data, form.sex_orientation.data, user['username']), True)
+        query_db("UPDATE interests SET username=? WHERE username=?",
+                 (form.username.data, session['username']), True)
         query_db(
             "UPDATE interests SET travelling=?, exercise=?, movies=?, dancing=?, cooking=?, outdoors=?, pets=?, photography=?, sports=? WHERE username=?",
             (update_interests[0], update_interests[1], update_interests[2], update_interests[3], update_interests[4],
-             update_interests[5], update_interests[6], update_interests[7], update_interests[8], form.username.data))
-        g.db.commit()
+             update_interests[5], update_interests[6], update_interests[7], update_interests[8], form.username.data), True)
         flash("Username and email updated, please click the link in the verification email we sent you to re-verify your account.", 'success')
         pop_session_values(form)
         send_verification_email(form)
         return redirect(url_for('login'))
 
     elif new_username:
-        query_db("UPDATE users SET username=?, gender=?, sex_orientation=? WHERE username=?", (form.username.data, form.gender.data, form.sex_orientation.data, session['username']))
-        g.db.commit()
-        query_db("UPDATE interests SET username=? WHERE username=?", (form.username.data, session['username']))
-        g.db.commit()
+        query_db("UPDATE users SET username=?, gender=?, sex_orientation=? WHERE username=?",
+                 (form.username.data, form.gender.data, form.sex_orientation.data, session['username']), True)
+        query_db("UPDATE interests SET username=? WHERE username=?",
+                 (form.username.data, session['username']), True)
         query_db(
             "UPDATE interests SET travelling=?, exercise=?, movies=?, dancing=?, cooking=?, outdoors=?, pets=?, photography=?, sports=? WHERE username=?",
             (update_interests[0], update_interests[1], update_interests[2], update_interests[3], update_interests[4],
-             update_interests[5], update_interests[6], update_interests[7], update_interests[8], form.username.data))
-        g.db.commit()
+             update_interests[5], update_interests[6], update_interests[7], update_interests[8], form.username.data), True)
         flash("Username updated!", 'success')
         set_session_values(form)
         return redirect(url_for('profile_update'))
 
     elif new_email:
-        query_db("UPDATE users SET email=?, gender=?, sex_orientation=? WHERE username=?", (form.email.data, form.gender.data, form.sex_orientation.data, session['username']))
-        g.db.commit()
+        query_db("UPDATE users SET email=?, gender=?, sex_orientation=? WHERE username=?",
+                 (form.email.data, form.gender.data, form.sex_orientation.data, session['username']), True)
         flash("Email updated, please click the link in the verification email we sent you to re-verify your account.", 'success')
         pop_session_values()
         send_verification_email(form)
         return redirect(url_for('login'))
 
     query_db("UPDATE users SET gender=?, sex_orientation=?, bio=?, firstname=?, lastname=?, age=?, complete=? WHERE username=?",
-             (form.gender.data, form.sex_orientation.data, form.bio.data, form.firstname.data, form.lastname.data, form.age.data, 'True', session['username']))
-    g.db.commit()
+             (form.gender.data, form.sex_orientation.data, form.bio.data, form.firstname.data, form.lastname.data, form.age.data, 'True', session['username']), True)
 
     query_db(
         "UPDATE interests SET travelling=?, exercise=?, movies=?, dancing=?, cooking=?, outdoors=?, pets=?, photography=?, sports=? WHERE username=?",
         (update_interests[0], update_interests[1], update_interests[2], update_interests[3], update_interests[4],
-         update_interests[5], update_interests[6], update_interests[7], update_interests[8], session['username']))
-    g.db.commit()
+         update_interests[5], update_interests[6], update_interests[7], update_interests[8], session['username']), True)
+
     return redirect(url_for('profile_update', form=form, user=user, pictures=pictures))
 
 
@@ -130,55 +131,45 @@ def user_lib_get_pictures(username):
 
 
 def user_lib_create_wink(username):
-    query_db("INSERT INTO likes (user_liking, user_liked) VALUES (?,?)", (session['username'], username))
-    g.db.commit()
+    query_db("INSERT INTO likes (user_liking, user_liked) VALUES (?,?)",
+             (session['username'], username), True)
     flash("You have winked at " + username, 'success')
-    query_db("UPDATE users SET likes=likes+1 WHERE username=?", (username,))
-    g.db.commit()
-    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,))
-    g.db.commit()
+    log_history_moment('wink', session['username'], username, 'You winked at ' + username)
+    log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
+
+    history = query_db("SELECT * FROM history")
+    print(history)
+    query_db("UPDATE users SET likes=likes+1 WHERE username=?", (username,), True)
     check_if_users_match(username)
-    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,))
-    g.db.commit()
-    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (session['username'],))
-    g.db.commit()
+    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,), True)
+    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (session['username'],), True)
     return redirect(url_for('profile_view', username=username))
 
 
 def user_lib_unwink(username):
-    query_db("DELETE FROM likes WHERE (user_liking=? AND user_liked=?)", (session['username'], username))
-    g.db.commit()
-    query_db("UPDATE users SET likes=likes-1 WHERE username=?", (username,))
-    g.db.commit()
+    query_db("DELETE FROM likes WHERE (user_liking=? AND user_liked=?)", (session['username'], username), True)
+    query_db("UPDATE users SET likes=likes-1 WHERE username=?", (username,), True)
     flash("You have un-winked " + username, 'success')
     match_check = query_db("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
               (session['username'], username, username, session['username']))
+
     if match_check:
         user_1 = query_db("SELECT * FROM matches WHERE user_1=? AND user_2=?", (session['username'], username))
         user_2 = query_db("SELECT * FROM matches WHERE user_1=? AND user_2=?", (username, session['username']))
         if user_1:
-            print(session['username'])
-            print(user_1)
-            query_db("DELETE FROM matches WHERE user_1=? AND user_2=?", (session['username'], username))
-            g.db.commit()
+            query_db("DELETE FROM matches WHERE user_1=? AND user_2=?", (session['username'], username), True)
+
         if user_2:
-            print(username)
-            print(user_2)
-            query_db("DELETE FROM matches WHERE user_1=? AND user_2=?", (username, session['username']))
-            g.db.commit()
+            query_db("DELETE FROM matches WHERE user_1=? AND user_2=?", (username, session['username']), True)
 
         testmatch = query_db("SELECT * FROM matches")
         print(testmatch)
-        query_db("UPDATE users SET matches=matches-1 WHERE username=?", (session['username'],))
-        g.db.commit()
-        query_db("UPDATE users SET matches=matches-1 WHERE username=?", (username,))
-        g.db.commit()
+        query_db("UPDATE users SET matches=matches-1 WHERE username=?", (session['username'],), True)
+        query_db("UPDATE users SET matches=matches-1 WHERE username=?", (username,), True)
         flash("You have unmatched from " + username, 'success')
 
-    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,))
-    g.db.commit()
-    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (session['username'],))
-    g.db.commit()
+    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,), True)
+    query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (session['username'],), True)
     return redirect(url_for('profile_view', username=username))
 
 
@@ -186,14 +177,12 @@ def check_if_users_match(username):
     user_1 = query_db("SELECT * FROM likes WHERE user_liking=? and user_liked=?", (session['username'], username))
     user_2 = query_db("SELECT * FROM likes WHERE user_liking=? and user_liked=?", (username, session['username']))
     match_check = query_db("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)", (session['username'], username, username, session['username']))
+
     if user_1 and user_2 and not match_check:
         flash("You and " + username + " have matched! You can now chat.", 'success')
-        query_db("INSERT INTO matches (user_1, user_2) VALUES (?,?)", (session['username'], username))
-        g.db.commit()
-        query_db("UPDATE users SET matches=matches+1 WHERE username=?", (session['username'],))
-        g.db.commit()
-        query_db("UPDATE users SET matches=matches+1 WHERE username=?", (username,))
-        g.db.commit()
+        query_db("INSERT INTO matches (user_1, user_2) VALUES (?,?)", (session['username'], username), True)
+        query_db("UPDATE users SET matches=matches+1 WHERE username=?", (session['username'],), True)
+        query_db("UPDATE users SET matches=matches+1 WHERE username=?", (username,), True)
 
 
 def set_session_values(form):
