@@ -16,6 +16,8 @@ from matcha.validate_lib.login                  import validate_lib_login_form
 from matcha.validate_lib.logout                 import validate_lib_logout_user
 from matcha.validate_lib.signup                 import validate_lib_signup_form, validate_lib_send_verification_email
 from matcha.user_lib.create_user                import user_lib_create_user, user_lib_create_interests
+from matcha.user_lib.history import user_lib_get_history_logs
+from matcha.common_lib.query import query_db
 
 clients = {}
 
@@ -35,11 +37,11 @@ def get_db():
     return db
 
 
-def query_db(query, args=(), one=False):
-    cur = g.db.execute(query, args)
-    rv = [dict((cur.description[idx][0], value)
-               for idx, value in enumerate(row)) for row in cur.fetchall()]
-    return (rv[0] if rv else None) if one else rv
+# def query_db(query, args=(), one=False):
+#     cur = g.db.execute(query, args)
+#     rv = [dict((cur.description[idx][0], value)
+#                for idx, value in enumerate(row)) for row in cur.fetchall()]
+#     return (rv[0] if rv else None) if one else rv
 
 
 # <----------Socket Handlers---------->
@@ -211,16 +213,16 @@ def update_profile_picture(filename):
 
 @app.route('/profile_view/<username>')
 def profile_view(username):
-    user_profile = query_db("SELECT * FROM users WHERE username=?", (username,), True)
-    interests = query_db("SELECT * FROM interests WHERE username=?", (username,), True)
+    user_profile = query_db("SELECT * FROM users WHERE username=?", (username,), False, True)
+    interests = query_db("SELECT * FROM interests WHERE username=?", (username,), False, True)
     matched = query_db("SELECT * from matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
-                       (username, session['username'], session['username'], username), True)
+                       (username, session['username'], session['username'], username), False, True)
     pictures = query_db("SELECT * FROM images WHERE username=?", (username,))
     winked = query_db("SELECT * FROM likes WHERE (user_liking=? AND user_liked=?)", (session['username'], username))
     # test_wink = query_db("SELECT * FROM likes")
     # print(test_wink)
     print(matched)
-    session_user = query_db("SELECT * FROM users WHERE username=?", (session['username'],), True)
+    session_user = query_db("SELECT * FROM users WHERE username=?", (session['username'],), False, True)
     interest_list = []
     if 'id' in interests: interests.pop('id')
     if interests:
@@ -238,7 +240,7 @@ def profile_view(username):
 @app.route('/wink/<username>', methods=['GET', 'POST'])
 def wink(username):
     already_liked = query_db("SELECT * FROM likes WHERE user_liking=? AND user_liked=?",
-                             (session['username'], username), True)
+                             (session['username'], username), False, True)
     if already_liked:
         flash("Hey! You have already winked at this person , wait for then to wink back at you.", 'danger')
         return redirect(url_for('profile_view', username=username))
@@ -255,7 +257,8 @@ def unwink(username):
 def history():
     if 'logged_in' in session:
         if session['logged_in']:
-            return render_template('history.html')
+            history_logs = user_lib_get_history_logs()
+            return render_template('history.html', history_logs=history_logs)
 
 
 @app.route('/notification', methods=['GET', 'POST'])
