@@ -6,19 +6,19 @@ from flask_mail         import Message
 from itsdangerous       import URLSafeTimedSerializer
 
 from matcha import mail
+from matcha.common_lib.query import query_db
 
-
-def query_db(query, args=(), one=False):
-    cur = g.db.execute(query, args)
-    rv = [dict((cur.description[idx][0], value)
-               for idx, value in enumerate(row)) for row in cur.fetchall()]
-    return (rv[0] if rv else None) if one else rv
+# def query_db(query, args=(), one=False):
+#     cur = g.db.execute(query, args)
+#     rv = [dict((cur.description[idx][0], value)
+#                for idx, value in enumerate(row)) for row in cur.fetchall()]
+#     return (rv[0] if rv else None) if one else rv
 
 
 def validate_lib_email_verification(token):
 
     username = decode_token(token)
-    check = query_db("SELECT * FROM users WHERE username=?", (username,), True)
+    check = query_db("SELECT * FROM users WHERE username=?", (username,), False, True)
     if check:
         update_verified(username)
         flash("Email verified! Please login to continue.", 'success')
@@ -29,8 +29,7 @@ def validate_lib_email_verification(token):
 
 
 def update_verified(username):
-    query_db("UPDATE users SET verified=? WHERE username=?", (True, username))
-    g.db.commit()
+    query_db("UPDATE users SET verified=? WHERE username=?", (True, username), True)
 
 
 def decode_token(token):
@@ -70,7 +69,7 @@ def check_valid_email(email):
     if not re.search("@", email):
         flash("Please use a valid email address, with a '@' symbol.", 'danger')
         return False
-    elif not query_db("SELECT * FROM users WHERE email=?", (email,),  True):
+    elif not query_db("SELECT * FROM users WHERE email=?", (email,), False, True):
         flash("A user with that email address does not exist, please try again.", 'danger')
         return False
     else:
@@ -128,7 +127,6 @@ def set_new_password(form):
 
     query_db("UPDATE users SET password=? WHERE email=?", (hashed_password, form.email.data,), True)
     flash("Password has been updated", 'success')
-    g.db.commit()
 
 
 
