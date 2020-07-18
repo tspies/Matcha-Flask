@@ -1,0 +1,45 @@
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  max-width: 500px;
+  margin: auto;
+}
+
+.thumb-pic {
+  max-width: 75px;
+  max-height: 75px;
+}
+
+.profile-pic {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+.suggestion {
+  border-radius: 20px;
+}
+
+body {
+  background: url('img/Splash.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: darkseagreen;
+    color: black;
+    text-align: right;
+}

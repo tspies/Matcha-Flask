@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+{% block nav %}
+         <nav class="navbar navbar-expand-lg navbar-light bg-light"> <a class="navbar-brand" href="#">Home</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">  <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+{#                    <li class="nav-item active">    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>#}
+                    </li>
+{#                    <li class="nav-item">   <a class="nav-link" href="#">Link</a>#}
+{#                    </li>#}
+                    <li class="nav-item dropdown">  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('history') }}">History </a>
+                        <a class="dropdown-item" href="#">Notifications</a>
+{#                        <div class="dropdown-divider"></div>#}
+{#                        <a class="dropdown-item" href="#">Something else here</a>#}
+                    </div>
+                    </li>
+                   {% if session['logged_in'] %}
+                       <li class="nav-item"> <a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                   {% endif %}
+                </ul>
+                <div class="">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('profile_update') }}">Profile</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+     </nav>
+{% endblock %}
+
+{% block content %}
+{#    <h1>{{ username }}</h1>#}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script> let username = '{{ username }}'</script>
+    <script src="{{ url_for('static', filename='socket.js') }}"></script>
+{#    <input type="text" id="notification_message">#}
+{#    <button id="send_notification_message">Send Notification</button>#}
+{#    <br>#}
+{#    <br>#}
+{#    <br>#}
+{#    Message: <input type="text" id="private_message">#}
+{#    Username: <input type="text" id="send_to_username">#}
+{#    <button id="send_private_message">Send Pvt Message</button>#}
+
+    <div class="container mx-auto mt-3" align="center">
+       <ul class="nav nav-tabs w-100">
+           <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#nav-product-list-all">All</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-accommodation">Fame</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-car-hire">Interests</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-rail">Geo</a></li>
+       </ul>
+    </div>
+
+
+<div class="mx-auto w-75 mt-5">
+    <div class="list-group">
+        {% if suggestions %}
+            {% for suggestion in suggestions %}
+                <div class="list-group mb-3 suggestion">
+                    <a href="{{ url_for('profile_view', username=suggestion.username) }}" class="list-group-item-action flex-column align-items-start">
+                         <div class="row">
+                             <div class="list-group-item w-100 list-group-item-action">
+                                 <div class="d-flex w-100 justify-content-between">
+                                    <img src="{{ url_for('static', filename="img/" + suggestion.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                    <h5 class="mb-1">{{ suggestion.username }}</h5>
+                                    {% if suggestion.last_online == "Online" %}
+                                       <small class="text-info">{{ suggestion.last_online }}</small>
+                                    {% else %}
+                                       <small class="text-danger">Last Seen : {{ suggestion.last_online }}</small>
+                                    {% endif %}
+                                </div>
+                             </div>
+                         </div>
+                        <div class="row">
+                            <div class="list-group-item w-100">
+{#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                <small>{{ suggestion.gender }} - {{ suggestion.sex_orientation }}</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    <small class="mr-4">Logged in as : {{ username }}</small>
+{% endblock %}

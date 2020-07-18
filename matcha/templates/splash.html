@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Splash{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="container-fluid mt-5 text-center">
+            <h1>Welcome to Matcha</h1>
+            <p> the only place to find the partner you have been looking for...</p>
+            <div class="row w-25 mx-auto">
+                <div class="col">
+                    <form method="get" action="{{ url_for('login') }}">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form method="get" action="{{ url_for('signup') }}">
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Login Page{% endblock %}
+
+{% block content %}
+    <div class="content-section w-75 mx-auto mt-5">
+        <div class="form-container">
+            <form method="POST" action="/login">
+                {{ form.hidden_tag() }}
+                <fieldset>
+                    <legend>Login</legend>
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+
+                        {% if form.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password.label(class="form-control-label") }}
+
+                        {% if form.errors %}
+                            {{ form.password(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        {{ form.remember.label(class="form-check-label") }}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-info mt-2") }}
+                </div>
+                <small class="text-muted">
+                    <a href="{{ url_for('forgot_password') }}">Forgot Password</a>
+                </small>
+            </form>
+        </div>
+        <div class="border-top pt-3">
+            <small class="text-muted ml-2">
+                Dont have an account? <a class="ml-2" href="{{ url_for('signup') }}">Sign Up</a>
+            </small>
+        </div>
+    </div>
+
+
+{#    <div class="w-50 h-100 container">#}
+{#        <div class="container-fluid mt-5 ">#}
+{#        <form method="post" action="/login">#}
+{#            <div class="form-group">#}
+{#                <label for="exampleInputPassword1">Username</label>#}
+{#                <input type="text" class="form-control" name="username" id="exampleInputPassword1" placeholder="Username">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="exampleInputEmail1">Email address</label>#}
+{#                <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">#}
+{#                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="exampleInputPassword1">Password</label>#}
+{#                <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">#}
+{#            </div>#}
+{#        <div class="form-check">#}
+{#            <input type="checkbox" class="form-check-input" id="exampleCheck1">#}
+{#            <label class="form-check-label" for="exampleCheck1">Check me out</label>#}
+{#        </div>#}
+{#                <button type="submit" class="btn btn-primary">Submit</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+{% endblock %}

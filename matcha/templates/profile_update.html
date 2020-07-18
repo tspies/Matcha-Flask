@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block nav %}
+         <nav class="navbar navbar-expand-lg navbar-light bg-light"> <a class="navbar-brand" href="{{ url_for('home') }}">Home</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">  <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+{#                    <li class="nav-item">    <a class="nav-link" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>#}
+                    </li>
+                    <li class="nav-item dropdown">  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More Info
+                    </a>    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">History</a>
+                        <a class="dropdown-item" href="#">Notifications</a>
+{#                        <div class="dropdown-divider"></div>#}
+{#                        <a class="dropdown-item" href="#">Something else here</a>#}
+                    </div>
+                    </li>
+                   {% if session['logged_in'] %}
+                       <li class="nav-item"> <a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                   {% endif %}
+                </ul>
+{#                <form class="form-inline my-2 my-lg-0">#}
+{#                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">#}
+{#                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>#}
+{#                </form>#}
+            </div>
+     </nav>
+{% endblock %}
+{% block title %}Profile Update{% endblock %}
+
+{% block content %}
+    <div class="content-section w-75 mx-auto mt-5">
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('profile_update') }}">
+                {{ form.hidden_tag() }}
+                <fieldset>
+                    <legend class="border-bottom">Profile Update</legend>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <a href="{{ url_for('update_profile_picture_pictures') }}">
+                                    <img src="{{ url_for('static', filename="img/" + form.profile_pic.data) }}" alt="..." class="img-thumbnail thumb-pic profile-pic">
+                                </a>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ form.username.label(class="form-control-label") }}
+                                {{ form.username(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                {{ form.email.label(class="form-control-label") }}
+                                {{ form.email(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                {{ form.firstname.label(class="form-control-label") }}
+                                {{ form.firstname(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                {{ form.lastname.label(class="form-control-label") }}
+                                {{ form.lastname(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                {{ form.gender.label(class="form-control-label") }}
+                                {{ form.gender(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                {{ form.sex_orientation.label(class="form-control-label") }}
+                                {{ form.sex_orientation(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-3">
+                                {{ form.likes.label(class="form-control-label") }}
+                                <input type="text" class="form-control form-control-sm" value="{{ form.likes.data }}" readonly>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                {{ form.matches.label(class="form-control-label") }}
+                                <input type="text" class="form-control form-control-sm" value="{{ form.matches.data }}" readonly>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                {{ form.fame.label(class="form-control-label") }}
+                                <input type="text" class="form-control form-control-sm" value="{{ form.fame.data }}" readonly>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                {{ form.age.label(class="form-control-label") }}
+                                {{ form.age(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Interests:</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.travelling.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="travelling" name="interest" value="travelling" checked>
+                                        <label class="custom-control-label" for="travelling">{{ form.travelling.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="travelling" name="interest" value="travelling">
+                                        <label class="custom-control-label" for="travelling">{{ form.travelling.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.exercise.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="exercise" name="interest" value="exercise" checked>
+                                        <label class="custom-control-label" for="exercise">{{ form.exercise.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="exercise" name="interest" value="exercise">
+                                        <label class="custom-control-label" for="exercise">{{ form.exercise.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.movies.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="movies" name="movies" value="movies" checked>
+                                        <label class="custom-control-label" for="movies">{{ form.movies.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="movies" name="interest" value="movies">
+                                        <label class="custom-control-label" for="movies">{{ form.movies.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                   {% if form.dancing.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="dancing" name="interest" value="dancing" checked>
+                                        <label class="custom-control-label" for="dancing">{{ form.dancing.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="dancing" name="interest" value="dancing">
+                                        <label class="custom-control-label" for="dancing">{{ form.dancing.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.photography.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="photography" name="interest" value="photography" checked>
+                                        <label class="custom-control-label" for="photography">{{ form.photography.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="photography" name="interest" value="photography">
+                                        <label class="custom-control-label" for="photography">{{ form.photography.label }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-checkbox">
+                                   {% if form.pets.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="pets" name="interest" value="pets" checked>
+                                        <label class="custom-control-label" for="pets">{{ form.pets.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="pets" name="interest" value="pets">
+                                        <label class="custom-control-label" for="pets">{{ form.pets.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.sports.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="sports" name="interest" value="sports" checked>
+                                        <label class="custom-control-label" for="sports">{{ form.sports.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="sports" name="interest" value="sports">
+                                        <label class="custom-control-label" for="sports">{{ form.sports.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    {% if form.cooking.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="cooking" name="interest" value="cooking" checked>
+                                        <label class="custom-control-label" for="cooking">{{ form.cooking.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="cooking" name="interest" value="cooking">
+                                        <label class="custom-control-label" for="cooking">{{ form.cooking.label }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                   {% if form.outdoors.data == 1 %}
+                                        <input type="checkbox" class="custom-control-input" id="outdoors" name="interest" value="outdoors" checked>
+                                        <label class="custom-control-label" for="outdoors">{{ form.outdoors.label }}</label>
+                                    {% else %}
+                                        <input type="checkbox" class="custom-control-input" id="outdoors" name="interest" value="outdoors">
+                                        <label class="custom-control-label" for="outdoors">{{ form.outdoors.label }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.bio.label(class="form-control-label") }}
+                        {{ form.bio(class="form-control form-control-sm") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </fieldset>
+            </form>
+            <div class="pt-2 pb-2">
+                <small class="text-muted">
+                    Change your password: <a class="ml-2" href="{{ url_for('forgot_password') }}">Click Here</a>
+                </small>
+            </div>
+            <div class="form-group">
+                {% if user.pics <= 4 %}
+                    <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Select image</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="image" id="image">
+                                <label class="custom-file-label" for="image">Select image...</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                {% else %}
+                    <small class="text-muted">You may only upload 5 pictures</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    {% if pictures %}{% for picture in pictures %}
+                        <div class="col-sm-12 cole col-md-4">
+                            <img src="{{ url_for('static', filename="img/" + picture.file_name) }}" alt="..." class="img-thumbnail thumb-pic profile-pic">
+                        </div>
+                    {% endfor %}
+                    {% else %}
+                        <div class="col"><h3>No Uploaded Images</h3></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block footer %}
+    <small class="mr-4">Logged in as : {{ user.username }}</small>
+{% endblock %}

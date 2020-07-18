@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Chat Portal{% endblock %}
+
+{% block nav %}
+         <nav class="navbar navbar-expand-lg navbar-light bg-light"> <a class="navbar-brand" href="#">Navbar</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">  <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">   <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                    </li>
+                   {% if session['logged_in'] %}
+                       <li class="nav-item"> <a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                   {% endif %}
+                </ul>
+                <div class="">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('profile_update') }}">Profile</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+     </nav>
+{% endblock %}
+
+{% block content %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            let socket = io.connect('http://127.0.0.1:5000');
+
+            socket.on('connect', function(){
+                socket.send("User is connected");
+            });
+            socket.on('message', function(msg){
+                $("#messages").append('<li>'+msg+'</li>');
+            });
+            $("#sendButton").on('click', function(){
+                 socket.send($("#myMessage").val());
+                 $("#myMessage").val('');
+            });
+        });
+    </script>
+
+    <ul id="messages"></ul>
+    <input type="text" id="myMessage">
+    <button id="sendButton">Send</button>
+{#    <form action="" method="POST">#}
+{#        <input type="text" class="username" placeholder="User Name"/>#}
+{#        <input type="text" class="message" placeholder="Messages"/>#}
+{#        <input type="submit"/>#}
+{#    </form>#}
+{% endblock %}
