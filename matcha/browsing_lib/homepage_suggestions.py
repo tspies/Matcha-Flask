@@ -9,5 +9,5 @@ from matcha.common_lib.query import query_db
 
 
 def browsing_lib_get_suggested_user_profiles(current_user_object):
-    suggestions = query_db("SELECT * FROM users WHERE NOT username=?", (session['username'],))
+    suggestions = query_db("SELECT * FROM users WHERE NOT username=? AND user_type='regular'", (session['username'],))
     return suggestions

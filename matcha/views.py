@@ -5,7 +5,7 @@ from flask_socketio                             import send, emit
 
 from matcha                                     import app, socketio
 from matcha.browsing_lib.homepage_suggestions   import browsing_lib_get_suggested_user_profiles
-from matcha.forms                               import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, ProfileUpdateForm
+from matcha.forms                               import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, ProfileUpdateForm, AdminForm
 from matcha.notification_lib.wink               import notification_lib_check_match
 from matcha.user_lib.profile                    import user_lib_validate_profile_update_form, user_lib_populate_profle_update_form, \
                                                         user_lib_get_pictures, user_lib_create_wink, user_lib_unwink
@@ -21,7 +21,8 @@ from matcha.common_lib.history                  import common_lib_get_history_lo
 from matcha.common_lib.query                    import query_db
 from matcha.browsing_lib.profile_view           import get_profile_data
 from matcha.common_lib.blocking                 import common_lib_check_if_blocked, common_lib_filter_blocked_accounts
-
+from matcha.admin_lib.validate_admin            import admin_lib_validate_login, admin_lib_logout_user
+from matcha.admin_lib.requests                  import admin_lib_get_block_requests
 clients = {}
 
 
@@ -75,12 +76,37 @@ def handle_private_message(payload):
 
 
 # <----------App Routes---------->
+@app.route("/admin_login", methods=['GET', 'POST'])
+def admin_login():
+    form = AdminForm()
+    if 'admin' in session:
+        if not session['admin']:
+            if request.method == "POST":
+                return admin_lib_validate_login(form)
+    return render_template("admin_login.html", form=form)
+
+
+@app.route('/admin_logout')
+def admin_logout():
+
+    flash('Logged Out of Admin portal', 'success')
+    return admin_lib_logout_user()
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+
+    block_requests = admin_lib_get_block_requests()
+    return render_template("admin.html", block_requests=block_requests)
+
+
 @app.route("/")
 def splash():
     if 'logged_in ' in session:
         if session['logged_in']:
             return redirect(url_for('home'))
     session['logged_in'] = False
+    session['admin'] = False
     return render_template("splash.html")
 
 
@@ -94,8 +120,6 @@ def login():
     if 'logged_in' in session:
         if not session['logged_in']:
             form = LoginForm()
-            # all_user = query_db("SELECT * FROM users")
-            # print(all_user)
             if request.method == "POST":
                 return validate_lib_login_form(form)
             return render_template("login.html", form=form)

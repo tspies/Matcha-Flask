@@ -14,6 +14,12 @@ class LoginForm(FlaskForm):
     remember = BooleanField("Remember Me")
 
 
+class AdminForm(FlaskForm):
+    email = StringField('Email:')
+    submit = SubmitField('Log In')
+    password = PasswordField('Password')
+
+
 class SignupForm(FlaskForm):
     email = StringField('Email:')
     username = StringField('Username:')

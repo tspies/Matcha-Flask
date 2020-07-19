@@ -20,7 +20,8 @@ create table users (
     geo_location string,
     last_online string default('Offline'),
     complete string default('False'),
-    verified string default(0)
+    verified string default(0),
+    user_type string default('regular')
 );
 
 drop table if exists interests;

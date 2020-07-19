@@ -6,7 +6,7 @@ from matcha.common_lib.query import query_db
 def get_profile_data(username):
 
     profile_data = {}
-    user_profile = query_db("SELECT * FROM users WHERE username=?", (username,), False, True)
+    user_profile = query_db("SELECT * FROM users WHERE username=? AND user_type='regular'", (username,), False, True)
     interests = query_db("SELECT * FROM interests WHERE username=?", (username,), False, True)
     matched = query_db("SELECT * from matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
                        (username, session['username'], session['username'], username), False, True)

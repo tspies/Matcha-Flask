@@ -22,3 +22,10 @@
         </div>
     </div>
 {% endblock %}
+
+{% block footer %}
+    <form action="{{ url_for('admin_login') }}">
+        <button type="submit" class=" mr-4 btn">Admin Portal</button>
+    </form>
+{#    <small class="mr-4">Logged in as : {{ username }}</small>#}
+{% endblock %}
