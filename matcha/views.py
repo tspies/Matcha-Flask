@@ -1,14 +1,14 @@
 import sqlite3
 
 from flask                                      import render_template, g, request, flash, session, redirect, url_for
-from flask_socketio                             import send, join_room, emit
+from flask_socketio                             import send, emit
 
 from matcha                                     import app, socketio
 from matcha.browsing_lib.homepage_suggestions   import browsing_lib_get_suggested_user_profiles
 from matcha.forms                               import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, ProfileUpdateForm
 from matcha.notification_lib.wink               import notification_lib_check_match
-from matcha.user_lib.profile import user_lib_validate_profile_update_form, user_lib_populate_profle_update_form, \
-    user_lib_get_pictures, user_lib_create_wink, user_lib_unwink
+from matcha.user_lib.profile                    import user_lib_validate_profile_update_form, user_lib_populate_profle_update_form, \
+                                                        user_lib_get_pictures, user_lib_create_wink, user_lib_unwink
 from matcha.user_lib.get_user                   import user_lib_get_user, user_lib_get_interests
 from matcha.validate_lib.email                  import validate_lib_email_verification, validate_lib_forgot_password, validate_lib_reset_password
 from matcha.validate_lib.image                  import validate_lib_handle_picture_upload, validate_lib_update_profile_picture
@@ -16,9 +16,9 @@ from matcha.validate_lib.login                  import validate_lib_login_form
 from matcha.validate_lib.logout                 import validate_lib_logout_user
 from matcha.validate_lib.signup                 import validate_lib_signup_form, validate_lib_send_verification_email
 from matcha.user_lib.create_user                import user_lib_create_user, user_lib_create_interests
-from matcha.user_lib.history import user_lib_get_history_logs
-from matcha.common_lib.query import query_db
-
+from matcha.common_lib.history                  import common_lib_get_history_logs, common_lib_log_history_moment
+from matcha.common_lib.query                    import query_db
+from matcha.browsing_lib.profile_view           import get_profile_data
 clients = {}
 
 
@@ -35,14 +35,6 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect("database.db")
     return db
-
-
-# def query_db(query, args=(), one=False):
-#     cur = g.db.execute(query, args)
-#     rv = [dict((cur.description[idx][0], value)
-#                for idx, value in enumerate(row)) for row in cur.fetchall()]
-#     return (rv[0] if rv else None) if one else rv
-
 
 # <----------Socket Handlers---------->
 @socketio.on('message')
@@ -213,25 +205,21 @@ def update_profile_picture(filename):
 
 @app.route('/profile_view/<username>')
 def profile_view(username):
-    user_profile = query_db("SELECT * FROM users WHERE username=?", (username,), False, True)
-    interests = query_db("SELECT * FROM interests WHERE username=?", (username,), False, True)
-    matched = query_db("SELECT * from matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
-                       (username, session['username'], session['username'], username), False, True)
-    pictures = query_db("SELECT * FROM images WHERE username=?", (username,))
-    winked = query_db("SELECT * FROM likes WHERE (user_liking=? AND user_liked=?)", (session['username'], username))
-    # test_wink = query_db("SELECT * FROM likes")
-    # print(test_wink)
-    print(matched)
-    session_user = query_db("SELECT * FROM users WHERE username=?", (session['username'],), False, True)
-    interest_list = []
-    if 'id' in interests: interests.pop('id')
-    if interests:
-        for key, value in interests.items():
-            if value == 1:
-                interest_list.append(key)
 
-    if user_profile:
-        return render_template("profile_view.html", winked=winked, user=user_profile, session_user=session_user, interests=interest_list, matched=matched, pictures=pictures)
+    profile = get_profile_data(username)
+
+    if profile['user_profile']:
+
+        common_lib_log_history_moment('profile_view', session['username'], username, "You viewed " + username + "'s profile")
+        common_lib_log_history_moment('profile_view', username, session['username'], session['username'] + " viewed your profile, why dont you check their profile out?")
+
+        return render_template("profile_view.html",
+                               winked=profile['winked'],
+                               user=profile['user_profile'],
+                               session_user=profile['session_user'],
+                               interests=profile['interest_list'],
+                               matched=profile['matched'],
+                               pictures=profile['pictures'])
     else:
         flash('That user does not exist', 'danger')
         return redirect(url_for('home'))
@@ -257,7 +245,7 @@ def unwink(username):
 def history():
     if 'logged_in' in session:
         if session['logged_in']:
-            history_logs = user_lib_get_history_logs()
+            history_logs = common_lib_get_history_logs()
             return render_template('history.html', history_logs=history_logs)
 
 

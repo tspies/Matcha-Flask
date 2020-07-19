@@ -73,5 +73,6 @@ create table history(
   log_username string not null,
   notif_username string not null,
   message string not null,
-  history_type string default('wink')
+  history_type string default('wink'),
+  logged_timestamp string not null
 );

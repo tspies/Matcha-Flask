@@ -30,12 +30,23 @@
 {% endblock %}
 
 {% block content %}
-    {% if history_logs %}
-        <h1>HISTORY</h1>
-        {% for history_log in history_logs %}
-            <h3><a href="{{ url_for('profile_view', username=history_log.notif_username) }}">{{ history_log.message }}</a></h3>
-        {% endfor %}
-    {% else %}
-        <h1>No History</h1>
-    {% endif %}
+    <div class="content-section w-75 mx-auto mt-5">
+        {% if history_logs %}
+            <h1>HISTORY</h1>
+            <ul class="list-group">
+                {% for history_log in history_logs %}
+                    <a href="{{ url_for('profile_view', username=history_log.notif_username) }}">
+                        <li class="list-group-item">
+                            {{ history_log.message }}
+                            <div class="float-right">
+                                {{ history_log.logged_timestamp }}
+                            </div>
+                        </li>
+                    </a>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h1>No History</h1>
+        {% endif %}
+    </div>
 {% endblock %}

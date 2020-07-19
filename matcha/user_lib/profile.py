@@ -1,11 +1,11 @@
 import re
 
-from flask import render_template, session, flash, g, redirect, url_for, current_app
+from flask import render_template, session, flash, redirect, url_for, current_app
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 
 from matcha import mail
-from .history import user_lib_log_history_moment
+from matcha.common_lib.history import common_lib_log_history_moment
 from matcha.common_lib.query import query_db
 
 # def query_db(query, args=(), commit=False, one=False):
@@ -134,8 +134,8 @@ def user_lib_create_wink(username):
     query_db("INSERT INTO likes (user_liking, user_liked) VALUES (?,?)",
              (session['username'], username), True)
     flash("You have winked at " + username, 'success')
-    user_lib_log_history_moment('wink', session['username'], username, 'You winked at ' + username)
-    user_lib_log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
+    common_lib_log_history_moment('wink', session['username'], username, 'You winked at ' + username)
+    common_lib_log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
 
     history = query_db("SELECT * FROM history")
     print(history)
@@ -151,8 +151,8 @@ def user_lib_unwink(username):
     query_db("UPDATE users SET likes=likes-1 WHERE username=?", (username,), True)
     flash("You have un-winked " + username, 'success')
 
-    user_lib_log_history_moment('unwink', session['username'], username, 'You unwinked ' + username)
-    user_lib_log_history_moment('unwink', username, session['username'], session['username'] + ' unwinked you! :(')
+    common_lib_log_history_moment('unwink', session['username'], username, 'You unwinked ' + username)
+    common_lib_log_history_moment('unwink', username, session['username'], session['username'] + ' unwinked you! :(')
 
     match_check = query_db("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
               (session['username'], username, username, session['username']))
@@ -171,8 +171,8 @@ def user_lib_unwink(username):
         query_db("UPDATE users SET matches=matches-1 WHERE username=?", (session['username'],), True)
         query_db("UPDATE users SET matches=matches-1 WHERE username=?", (username,), True)
 
-        user_lib_log_history_moment('unmatch', session['username'], username, 'You unmatched with ' + username)
-        user_lib_log_history_moment('unmatch', username, session['username'], session['username'] + ' unmatched with you! :(')
+        common_lib_log_history_moment('unmatch', session['username'], username, 'You unmatched with ' + username)
+        common_lib_log_history_moment('unmatch', username, session['username'], session['username'] + ' unmatched with you! :(')
 
         flash("You have unmatched from " + username, 'success')
 
@@ -189,8 +189,8 @@ def check_if_users_match(username):
     if user_1 and user_2 and not match_check:
         flash("You and " + username + " have matched! You can now chat.", 'success')
 
-        user_lib_log_history_moment('match', session['username'], username, 'You matched with ' + username + '<3')
-        user_lib_log_history_moment('match', username, session['username'], session['username'] + ' matched with you! <3')
+        common_lib_log_history_moment('match', session['username'], username, 'You matched with ' + username + '<3')
+        common_lib_log_history_moment('match', username, session['username'], session['username'] + ' matched with you! <3')
 
         query_db("INSERT INTO matches (user_1, user_2) VALUES (?,?)", (session['username'], username), True)
         query_db("UPDATE users SET matches=matches+1 WHERE username=?", (session['username'],), True)
