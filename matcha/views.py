@@ -16,9 +16,12 @@ from matcha.validate_lib.login                  import validate_lib_login_form
 from matcha.validate_lib.logout                 import validate_lib_logout_user
 from matcha.validate_lib.signup                 import validate_lib_signup_form, validate_lib_send_verification_email
 from matcha.user_lib.create_user                import user_lib_create_user, user_lib_create_interests
+from matcha.user_lib.block_user                 import user_lib_block_user
 from matcha.common_lib.history                  import common_lib_get_history_logs, common_lib_log_history_moment
 from matcha.common_lib.query                    import query_db
 from matcha.browsing_lib.profile_view           import get_profile_data
+from matcha.common_lib.blocking                 import common_lib_check_if_blocked, common_lib_filter_blocked_accounts
+
 clients = {}
 
 
@@ -128,7 +131,8 @@ def home():
         if current_user_object['complete'] != 'False':
             suggested_profiles = browsing_lib_get_suggested_user_profiles(current_user_object)
             print(suggested_profiles)
-            return render_template("home.html", suggestions=suggested_profiles, username=session['username'])
+            blocked_name_list = common_lib_filter_blocked_accounts(suggested_profiles)
+            return render_template("home.html", suggestions=suggested_profiles, username=session['username'], blocked_list=blocked_name_list)
         else:
             flash('Please complete your profile to continue', 'danger')
             return redirect(url_for('profile_update'))
@@ -211,7 +215,8 @@ def profile_view(username):
     if profile['user_profile']:
 
         common_lib_log_history_moment('profile_view', session['username'], username, "You viewed " + username + "'s profile")
-        common_lib_log_history_moment('profile_view', username, session['username'], session['username'] + " viewed your profile, why dont you check their profile out?")
+        if not common_lib_check_if_blocked(username):
+            common_lib_log_history_moment('profile_view', username, session['username'], session['username'] + " viewed your profile, why dont you check their profile out?")
 
         return render_template("profile_view.html",
                                winked=profile['winked'],
@@ -246,7 +251,15 @@ def history():
     if 'logged_in' in session:
         if session['logged_in']:
             history_logs = common_lib_get_history_logs()
-            return render_template('history.html', history_logs=history_logs)
+            return render_template('history.html', history_logs=history_logs, username=session['username'])
+
+
+@app.route('/block_user/<username>', methods=['GET', 'POST'])
+def block_user(username):
+    if 'logged_in' in session:
+        if session['logged_in']:
+            user_lib_block_user(username)
+            return redirect(url_for('home'))
 
 
 @app.route('/notification', methods=['GET', 'POST'])

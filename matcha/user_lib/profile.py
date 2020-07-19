@@ -7,6 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 from matcha import mail
 from matcha.common_lib.history import common_lib_log_history_moment
 from matcha.common_lib.query import query_db
+from matcha.common_lib.blocking import common_lib_check_if_blocked
 
 # def query_db(query, args=(), commit=False, one=False):
 #     cur = g.db.execute(query, args)
@@ -133,9 +134,13 @@ def user_lib_get_pictures(username):
 def user_lib_create_wink(username):
     query_db("INSERT INTO likes (user_liking, user_liked) VALUES (?,?)",
              (session['username'], username), True)
+
     flash("You have winked at " + username, 'success')
+
     common_lib_log_history_moment('wink', session['username'], username, 'You winked at ' + username)
-    common_lib_log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
+
+    if not common_lib_check_if_blocked(username):
+        common_lib_log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
 
     history = query_db("SELECT * FROM history")
     print(history)
@@ -152,7 +157,8 @@ def user_lib_unwink(username):
     flash("You have un-winked " + username, 'success')
 
     common_lib_log_history_moment('unwink', session['username'], username, 'You unwinked ' + username)
-    common_lib_log_history_moment('unwink', username, session['username'], session['username'] + ' unwinked you! :(')
+    if not common_lib_check_if_blocked(username):
+        common_lib_log_history_moment('unwink', username, session['username'], session['username'] + ' unwinked you! :(')
 
     match_check = query_db("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)",
               (session['username'], username, username, session['username']))
@@ -172,7 +178,8 @@ def user_lib_unwink(username):
         query_db("UPDATE users SET matches=matches-1 WHERE username=?", (username,), True)
 
         common_lib_log_history_moment('unmatch', session['username'], username, 'You unmatched with ' + username)
-        common_lib_log_history_moment('unmatch', username, session['username'], session['username'] + ' unmatched with you! :(')
+        if not common_lib_check_if_blocked(username):
+            common_lib_log_history_moment('unmatch', username, session['username'], session['username'] + ' unmatched with you! :(')
 
         flash("You have unmatched from " + username, 'success')
 
@@ -190,7 +197,8 @@ def check_if_users_match(username):
         flash("You and " + username + " have matched! You can now chat.", 'success')
 
         common_lib_log_history_moment('match', session['username'], username, 'You matched with ' + username + '<3')
-        common_lib_log_history_moment('match', username, session['username'], session['username'] + ' matched with you! <3')
+        if not common_lib_check_if_blocked(username):
+            common_lib_log_history_moment('match', username, session['username'], session['username'] + ' matched with you! <3')
 
         query_db("INSERT INTO matches (user_1, user_2) VALUES (?,?)", (session['username'], username), True)
         query_db("UPDATE users SET matches=matches+1 WHERE username=?", (session['username'],), True)

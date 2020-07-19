@@ -91,6 +91,18 @@
                                     </div>
                                 {% endif %}
                             </div>
+                            <div class="row mt-2 w-100">
+                                <div class="col">
+{#                                    <form action="{{ url_for('wink', username=user.username) }}">#}
+{#                                        <button type="submit" class="btn btn-danger">Block</button>#}
+{#                                    </form>#}
+                                </div>
+                                <div class="col">
+                                    <form action="{{ url_for('block_user', username=user.username) }}">
+                                        <button type="submit" class="btn btn-danger">Block</button>
+                                    </form>
+                                </div>
+                            </div>
                         </ul>
                     </div>
                     <div class="col-sm-12  col-md-6 mx-auto mt-2 mb-2">

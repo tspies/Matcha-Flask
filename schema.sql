@@ -76,3 +76,10 @@ create table history(
   history_type string default('wink'),
   logged_timestamp string not null
 );
+
+drop table if exists blocked_accounts;
+create table blocked_accounts(
+    user_blocking string not null,
+    blocked_user string not null,
+    processed integer default(0)
+);

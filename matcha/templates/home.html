@@ -63,29 +63,31 @@
     <div class="list-group">
         {% if suggestions %}
             {% for suggestion in suggestions %}
-                <div class="list-group mb-3 suggestion">
-                    <a href="{{ url_for('profile_view', username=suggestion.username) }}" class="list-group-item-action flex-column align-items-start">
-                         <div class="row">
-                             <div class="list-group-item w-100 list-group-item-action">
-                                 <div class="d-flex w-100 justify-content-between">
-                                    <img src="{{ url_for('static', filename="img/" + suggestion.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
-                                    <h5 class="mb-1">{{ suggestion.username }}</h5>
-                                    {% if suggestion.last_online == "Online" %}
-                                       <small class="text-info">{{ suggestion.last_online }}</small>
-                                    {% else %}
-                                       <small class="text-danger">Last Seen : {{ suggestion.last_online }}</small>
-                                    {% endif %}
-                                </div>
+                {% if suggestion.username not in blocked_list %}
+                    <div class="list-group mb-3 suggestion">
+                        <a href="{{ url_for('profile_view', username=suggestion.username) }}" class="list-group-item-action flex-column align-items-start">
+                             <div class="row">
+                                 <div class="list-group-item w-100 list-group-item-action">
+                                     <div class="d-flex w-100 justify-content-between">
+                                        <img src="{{ url_for('static', filename="img/" + suggestion.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                        <h5 class="mb-1">{{ suggestion.username }}</h5>
+                                        {% if suggestion.last_online == "Online" %}
+                                           <small class="text-info">{{ suggestion.last_online }}</small>
+                                        {% else %}
+                                           <small class="text-danger">Last Seen : {{ suggestion.last_online }}</small>
+                                        {% endif %}
+                                    </div>
+                                 </div>
                              </div>
-                         </div>
-                        <div class="row">
-                            <div class="list-group-item w-100">
-{#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
-                                <small>{{ suggestion.gender }} - {{ suggestion.sex_orientation }}</small>
+                            <div class="row">
+                                <div class="list-group-item w-100">
+    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                    <small>{{ suggestion.gender }} - {{ suggestion.sex_orientation }}</small>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>

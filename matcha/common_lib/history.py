@@ -1,6 +1,7 @@
 from flask import session
 from .query import query_db
 from datetime import datetime
+from .blocking import common_lib_check_if_blocked
 
 
 def common_lib_log_history_moment(log_type, logging_user, notif_username, message):
