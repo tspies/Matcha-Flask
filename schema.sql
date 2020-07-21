@@ -84,3 +84,10 @@ create table blocked_accounts(
     blocked_user string not null,
     processed integer default(0)
 );
+
+drop table if exists fake_accounts;
+create table fake_accounts(
+    user_reporting string not null,
+    fake_user string not null,
+    processed integer default(0)
+);

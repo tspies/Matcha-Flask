@@ -16,13 +16,13 @@ from matcha.validate_lib.login                  import validate_lib_login_form
 from matcha.validate_lib.logout                 import validate_lib_logout_user
 from matcha.validate_lib.signup                 import validate_lib_signup_form, validate_lib_send_verification_email
 from matcha.user_lib.create_user                import user_lib_create_user, user_lib_create_interests
-from matcha.user_lib.block_user                 import user_lib_block_user
+from matcha.user_lib.block_user                 import user_lib_block_user, user_lib_fake_user
 from matcha.common_lib.history                  import common_lib_get_history_logs, common_lib_log_history_moment
 from matcha.common_lib.query                    import query_db
 from matcha.browsing_lib.profile_view           import get_profile_data
 from matcha.common_lib.blocking                 import common_lib_check_if_blocked, common_lib_filter_blocked_accounts
 from matcha.admin_lib.validate_admin            import admin_lib_validate_login, admin_lib_logout_user
-from matcha.admin_lib.requests                  import admin_lib_get_block_requests
+from matcha.admin_lib.requests                  import admin_lib_get_block_requests, admin_lib_get_fake_requests
 clients = {}
 
 
@@ -39,6 +39,7 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect("database.db")
     return db
+
 
 # <----------Socket Handlers---------->
 @socketio.on('message')
@@ -95,10 +96,15 @@ def admin_logout():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if 'admin' in session:
+        if session['admin']:
 
-    block_requests = admin_lib_get_block_requests()
-    return render_template("admin.html", block_requests=block_requests)
+            block_requests = admin_lib_get_block_requests()
+            fake_requests = admin_lib_get_fake_requests()
 
+            return render_template("admin.html", block_requests=block_requests, fake_requests=fake_requests)
+    form = AdminForm()
+    return render_template("admin_login.html", form=form)
 
 @app.route("/")
 def splash():
@@ -283,6 +289,14 @@ def block_user(username):
     if 'logged_in' in session:
         if session['logged_in']:
             user_lib_block_user(username)
+            return redirect(url_for('home'))
+
+
+@app.route('/fake_user/<username>', methods=['GET', 'POST'])
+def fake_user(username):
+    if 'logged_in' in session:
+        if session['logged_in']:
+            user_lib_fake_user(username)
             return redirect(url_for('home'))
 
 

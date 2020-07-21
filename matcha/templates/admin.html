@@ -4,19 +4,24 @@
 {% block content %}
     <div class="w-75 mt-4 mx-auto">
         <div class="row">
-            {% if online_users %}
+            {% if fake_requests %}
                 <div class="col">
                     <ul class="list-group">
-    {#                    {% for history_log in history_logs %}#}
-    {#                        <a href="{{ url_for('profile_view', username=history_log.notif_username) }}">#}
-    {#                            <li class="list-group-item">#}
-    {#                                {{ history_log.message }}#}
-    {#                                <div class="float-right">#}
-    {#                                    {{ history_log.logged_timestamp }}#}
-    {#                                </div>#}
-    {#                            </li>#}
-    {#                        </a>#}
-    {#                    {% endfor %}#}
+                        {% if fake_requests %}
+                            {% for fake_request in fake_requests %}
+
+                                    <li class="list-group-item">
+                                        User {{ fake_request.user_reporting }} reported {{ fake_request.fake_user }} as a fake account.
+                                        <div class="float-right">
+                                            Status: {{ fake_request.processed }}
+                                        </div>
+                                    </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">
+                                No Current Fake Account Reports
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             {% endif %}
