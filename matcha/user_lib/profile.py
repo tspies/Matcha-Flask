@@ -142,8 +142,6 @@ def user_lib_create_wink(username):
     if not common_lib_check_if_blocked(username):
         common_lib_log_history_moment('wink', username, session['username'], session['username'] + ' winked at you!')
 
-    history = query_db("SELECT * FROM history")
-    print(history)
     query_db("UPDATE users SET likes=likes+1 WHERE username=?", (username,), True)
     check_if_users_match(username)
     query_db("UPDATE users SET fame = ((likes + matches + 1) * 100) WHERE username=?", (username,), True)

@@ -15,7 +15,7 @@ def query_db(query, args=(), one=False):
 
 
 def notification_lib_check_match(username):
+
     connection = connect_db()
     match_check = connection.execute("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)", (session['username'], username, username, session['username']))
-    # match_check = query_db("SELECT * FROM matches WHERE (user_1=? AND user_2=?) OR (user_1=? AND user_2=?)", (session['username'], username, username, session['username']))
     return True if match_check else False

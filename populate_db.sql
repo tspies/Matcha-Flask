@@ -1,5 +1,5 @@
 
-INSERT INTO users(email, username, profile_pic, firstname, lastname, password,  gender, last_online, verified, user_type) VALUES ('admin@matcha.com', 'Admin', 'default.jpg', 'Tristyn', 'Spies', '$2b$12$T/ENjvPLY4p.beWVlWjGOe/6j0h2agDbFYA.Hub9DilAKzExtkJeq', 'Male', 'Never', 1, 'admin');
+INSERT INTO users(email, username, profile_pic, firstname, lastname, password,  gender, last_online, verified, user_type, fame) VALUES ('admin@matcha.com', 'Admin', 'default.jpg', 'Tristyn', 'Spies', '$2b$12$T/ENjvPLY4p.beWVlWjGOe/6j0h2agDbFYA.Hub9DilAKzExtkJeq', 'Male', 'Never', 1, 'admin', 10000);
 
 
 INSERT INTO users(email, username, profile_pic, firstname, lastname, password,  gender, last_online, verified, sex_orientation, fame) VALUES ('tspies@student.wethinkcode.co.za', 'Tristyn', 'Tristyn_HavanaCouplesShoot00342_edited.jpg', 'Tristyn', 'Spies', '$2b$12$T/ENjvPLY4p.beWVlWjGOe/6j0h2agDbFYA.Hub9DilAKzExtkJeq', 'Male', 'Never', 1, 'Heterosexual', 200);

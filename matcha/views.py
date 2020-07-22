@@ -161,7 +161,7 @@ def home():
         current_user_object = user_lib_get_user(session['username'])
         if current_user_object['complete'] != 'False':
             suggestions, sexuals, fames, interests = browsing_lib_get_suggested_user_profiles(current_user_object)
-            blocked_name_list = common_lib_filter_blocked_accounts(suggestions, sexuals)
+            blocked_name_list = common_lib_filter_blocked_accounts(sexuals)
             return render_template("home.html", suggestions=suggestions, interests=interests, fames=fames, sexuals=sexuals, username=session['username'], blocked_list=blocked_name_list)
         else:
             flash('Please complete your profile to continue', 'danger')

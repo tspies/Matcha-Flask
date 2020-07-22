@@ -5,8 +5,6 @@ from matcha.common_lib.query import query_db
 def browsing_lib_get_suggested_user_profiles(user):
 
     interests = query_db("SELECT * FROM interests WHERE username=?", (user['username'],))
-    fame = user['fame']
-    age = user['age']
 
     interest_profiles = interest_suggestions(interests)
 
@@ -79,7 +77,7 @@ def sexual_suggestions(user):
 
     else:
 
-        suggestions = query_db("SELECT * FROM users AND NOT username=?", (session['username'],))
+        suggestions = query_db("SELECT * FROM users WHERE NOT username=? AND NOT username=?", (session['username'], 'Admin'))
 
     return suggestions
 
@@ -88,7 +86,7 @@ def fame_suggestions(user):
 
     fame = user['fame']
 
-    suggestions = query_db("SELECT * FROM users WHERE fame>=? AND NOT username=?", (fame, session['username']))
+    suggestions = query_db("SELECT * FROM users WHERE fame>=? AND NOT username=? AND NOT username=?", (fame, session['username'], 'Admin'))
 
     return suggestions
 

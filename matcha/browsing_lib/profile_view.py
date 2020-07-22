@@ -13,7 +13,6 @@ def get_profile_data(username):
     pictures = query_db("SELECT * FROM images WHERE username=?", (username,))
     winked = query_db("SELECT * FROM likes WHERE (user_liking=? AND user_liked=?)", (session['username'], username))
 
-    print(matched)
     session_user = query_db("SELECT * FROM users WHERE username=?", (session['username'],), False, True)
     interest_list = []
     if 'id' in interests: interests.pop('id')
