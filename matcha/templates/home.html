@@ -51,49 +51,162 @@
 
     <div class="container mx-auto mt-3" align="center">
        <ul class="nav nav-tabs w-100">
-           <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#nav-product-list-all">All</a></li>
-           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-accommodation">Fame</a></li>
-           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-car-hire">Interests</a></li>
-           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#nav-product-list-rail">Geo</a></li>
+           <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#All">All</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#Fame">Fame</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#Sex-Preference">Sex Preference</a></li>
+           <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#Interests">Interests</a></li>
        </ul>
     </div>
 
-
-<div class="mx-auto w-75 mt-5">
-    <div class="list-group">
-        {% if suggestions %}
-            {% for suggestion in suggestions %}
-                {% if suggestion.username not in blocked_list %}
-                    <div class="list-group mb-3 suggestion">
-                        <a href="{{ url_for('profile_view', username=suggestion.username) }}" class="list-group-item-action flex-column align-items-start">
-                             <div class="row">
-                                 <div class="list-group-item w-100 list-group-item-action">
-                                     <div class="d-flex w-100 justify-content-between">
-                                        <img src="{{ url_for('static', filename="img/" + suggestion.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
-                                        <h5 class="mb-1">{{ suggestion.username }}</h5>
-                                        {% if suggestion.last_online == "Online" %}
-                                           <small class="text-info">{{ suggestion.last_online }}</small>
-                                        {% else %}
-                                           <small class="text-danger">Last Seen : {{ suggestion.last_online }}</small>
-                                        {% endif %}
+    <div class="container mx-auto mt-3" align="center">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="All">
+               <div class="mx-auto w-75 mt-5">
+                    <div class="list-group">
+                        {% if suggestions %}
+                            {% for suggestion in suggestions %}
+                                {% if suggestion.username not in blocked_list %}
+                                    <div class="list-group mb-3 suggestion">
+                                        <a href="{{ url_for('profile_view', username=suggestion.username) }}" class="list-group-item-action flex-column align-items-start">
+                                             <div class="row">
+                                                 <div class="list-group-item w-100 list-group-item-action">
+                                                     <div class="d-flex w-100 justify-content-between">
+                                                        <img src="{{ url_for('static', filename='img/' + suggestion.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                                        <h5 class="mb-1">{{ suggestion.username }}</h5>
+                                                        {% if suggestion.last_online == "Online" %}
+                                                           <small class="text-info">{{ suggestion.last_online }}</small>
+                                                        {% else %}
+                                                           <small class="text-danger">Last Seen : {{ suggestion.last_online }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                 </div>
+                                             </div>
+                                            <div class="row">
+                                                <div class="list-group-item w-100">
+                    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                                    <small>{{ suggestion.gender }} - {{ suggestion.sex_orientation }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
-                                 </div>
-                             </div>
-                            <div class="row">
-                                <div class="list-group-item w-100">
-    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
-                                    <small>{{ suggestion.gender }} - {{ suggestion.sex_orientation }}</small>
-                                </div>
-                            </div>
-                        </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Fame">
+                <div class="mx-auto w-75 mt-5">
+                    <div class="list-group">
+                        {% if fames %}
+                            {% for fame in fames %}
+                                {% if fame.username not in blocked_list %}
+                                    <div class="list-group mb-3 suggestion">
+                                        <a href="{{ url_for('profile_view', username=fame.username) }}" class="list-group-item-action flex-column align-items-start">
+                                             <div class="row">
+                                                 <div class="list-group-item w-100 list-group-item-action">
+                                                     <div class="d-flex w-100 justify-content-between">
+                                                        <img src="{{ url_for('static', filename='img/' + fame.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                                        <h5 class="mb-1">{{ fame.username }}</h5>
+                                                        {% if fame.last_online == "Online" %}
+                                                           <small class="text-info">{{ fame.last_online }}</small>
+                                                        {% else %}
+                                                           <small class="text-danger">Last Seen : {{ fame.last_online }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                 </div>
+                                             </div>
+                                            <div class="row">
+                                                <div class="list-group-item w-100">
+                    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                                    <small>{{ fame.gender }} - {{ fame.sex_orientation }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Sex-Preference">
+                <div class="mx-auto w-75 mt-5">
+                    <div class="list-group">
+                        {% if sexuals %}
+                            {% for sexual in sexuals %}
+                                {% if sexual.username not in blocked_list %}
+                                    <div class="list-group mb-3 suggestion">
+                                        <a href="{{ url_for('profile_view', username=sexual.username) }}" class="list-group-item-action flex-column align-items-start">
+                                             <div class="row">
+                                                 <div class="list-group-item w-100 list-group-item-action">
+                                                     <div class="d-flex w-100 justify-content-between">
+                                                        <img src="{{ url_for('static', filename='img/' + sexual.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                                        <h5 class="mb-1">{{ sexual.username }}</h5>
+                                                        {% if sexual.last_online == "Online" %}
+                                                           <small class="text-info">{{ sexual.last_online }}</small>
+                                                        {% else %}
+                                                           <small class="text-danger">Last Seen : {{ sexual.last_online }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                 </div>
+                                             </div>
+                                            <div class="row">
+                                                <div class="list-group-item w-100">
+                    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                                    <small>{{ sexual.gender }} - {{ sexual.sex_orientation }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Interests">
+                <div class="mx-auto w-75 mt-5">
+                    <div class="list-group">
+                        {% if interests %}
+                            {% for interest in interests %}
+                                {% if interest.username not in blocked_list %}
+                                    <div class="list-group mb-3 suggestion">
+                                        <a href="{{ url_for('profile_view', username=interest.username) }}" class="list-group-item-action flex-column align-items-start">
+                                             <div class="row">
+                                                 <div class="list-group-item w-100 list-group-item-action">
+                                                     <div class="d-flex w-100 justify-content-between">
+                                                        <img src="{{ url_for('static', filename='img/' + interest.profile_pic) }}" alt="..." class="img-thumbnail thumb-pic">
+                                                        <h5 class="mb-1">{{ interest.username }}</h5>
+                                                        {% if interest.last_online == "Online" %}
+                                                           <small class="text-info">{{ interest.last_online }}</small>
+                                                        {% else %}
+                                                           <small class="text-danger">Last Seen : {{ interest.last_online }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                 </div>
+                                             </div>
+                                            <div class="row">
+                                                <div class="list-group-item w-100">
+                    {#                                <p class="mb-1">{{ suggestion.bio }}</p>#}
+                                                    <small>{{ interest.gender }} - {{ interest.sex_orientation }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
+
+
 {% endblock %}
 
 {% block footer %}
     <small class="mr-4">Logged in as : {{ username }}</small>
-{% endblock %}
+{% endblock footer %}

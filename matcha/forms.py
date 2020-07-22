@@ -53,7 +53,7 @@ class ProfileUpdateForm(FlaskForm):
     matches = IntegerField('Matches:')
     bio = TextAreaField('Bio:')
     gender = SelectField('Gender:', choices=GENDER_TYPES, default='')
-    sex_orientation = SelectField('Sexual Orientation', choices=SEX_ORIENTATION, default='Bisexual')
+    sex_orientation = SelectField('Sexual Orientation', choices=SEX_ORIENTATION, default='')
     fame = IntegerField('Fame:')
     geo_location = StringField('Location:')
     bio = TextAreaField('Bio:')

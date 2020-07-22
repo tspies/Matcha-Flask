@@ -99,5 +99,5 @@ create table user_location(
     region string not null,
     city string not null,
     lat real not null,
-    lng real not null,
+    lng real not null
 );

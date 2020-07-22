@@ -6,7 +6,6 @@ from flask_mail             import Mail
 from flask_bcrypt           import Bcrypt
 from flask_socketio         import SocketIO
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_simple_geoip     import SimpleGeoIP
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_DEFAULT_SENDER = 'matchadatingxxx@gmail.com'
@@ -30,7 +29,6 @@ bcrypt      = Bcrypt(app)
 mail        = Mail(app)
 socketio    = SocketIO(app)
 photos      = UploadSet('photos', IMAGES)
-simple_geoip = SimpleGeoIP(app)
 configure_uploads(app, photos)
 patch_request_class(app)
 

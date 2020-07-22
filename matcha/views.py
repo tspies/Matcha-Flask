@@ -3,7 +3,7 @@ import sqlite3
 from flask import render_template, g, request, flash, session, redirect, url_for, jsonify
 from flask_socketio                             import send, emit
 
-from matcha import app, socketio, simple_geoip
+from matcha import app, socketio
 from matcha.browsing_lib.homepage_suggestions   import browsing_lib_get_suggested_user_profiles
 from matcha.forms                               import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, ProfileUpdateForm, AdminForm
 from matcha.notification_lib.wink               import notification_lib_check_match
@@ -160,10 +160,9 @@ def home():
     if session.get('logged_in'):
         current_user_object = user_lib_get_user(session['username'])
         if current_user_object['complete'] != 'False':
-            suggested_profiles = browsing_lib_get_suggested_user_profiles(current_user_object)
-            print(suggested_profiles)
-            blocked_name_list = common_lib_filter_blocked_accounts(suggested_profiles)
-            return render_template("home.html", suggestions=suggested_profiles, username=session['username'], blocked_list=blocked_name_list)
+            suggestions, sexuals, fames, interests = browsing_lib_get_suggested_user_profiles(current_user_object)
+            blocked_name_list = common_lib_filter_blocked_accounts(suggestions, sexuals)
+            return render_template("home.html", suggestions=suggestions, interests=interests, fames=fames, sexuals=sexuals, username=session['username'], blocked_list=blocked_name_list)
         else:
             flash('Please complete your profile to continue', 'danger')
             return redirect(url_for('profile_update'))
@@ -213,7 +212,6 @@ def profile_update():
                 form = user_lib_populate_profle_update_form(form, user, interests)
                 pictures = user_lib_get_pictures(session['username'])
 
-                API_KEY = 'rPDjypSpuX0dygJYNMNYS9dCY_1JiCEdSZUXI8oO0MQ'
             return render_template("profile_update.html", form=form, user=user, interests=interests, pictures=pictures)
     return redirect(url_for('splash'))
 
