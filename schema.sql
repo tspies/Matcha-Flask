@@ -91,3 +91,13 @@ create table fake_accounts(
     fake_user string not null,
     processed integer default(0)
 );
+
+drop table if exists  user_location;
+create table user_location(
+    username string not null,
+    country string not null,
+    region string not null,
+    city string not null,
+    lat real not null,
+    lng real not null,
+);

@@ -1,9 +1,9 @@
 import sqlite3
 
-from flask                                      import render_template, g, request, flash, session, redirect, url_for
+from flask import render_template, g, request, flash, session, redirect, url_for, jsonify
 from flask_socketio                             import send, emit
 
-from matcha                                     import app, socketio
+from matcha import app, socketio, simple_geoip
 from matcha.browsing_lib.homepage_suggestions   import browsing_lib_get_suggested_user_profiles
 from matcha.forms                               import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, ProfileUpdateForm, AdminForm
 from matcha.notification_lib.wink               import notification_lib_check_match
@@ -105,6 +105,7 @@ def admin():
             return render_template("admin.html", block_requests=block_requests, fake_requests=fake_requests)
     form = AdminForm()
     return render_template("admin_login.html", form=form)
+
 
 @app.route("/")
 def splash():
@@ -211,6 +212,8 @@ def profile_update():
                 interests = user_lib_get_interests(session['username'])
                 form = user_lib_populate_profle_update_form(form, user, interests)
                 pictures = user_lib_get_pictures(session['username'])
+
+                API_KEY = 'rPDjypSpuX0dygJYNMNYS9dCY_1JiCEdSZUXI8oO0MQ'
             return render_template("profile_update.html", form=form, user=user, interests=interests, pictures=pictures)
     return redirect(url_for('splash'))
 

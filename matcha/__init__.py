@@ -1,11 +1,12 @@
 import sqlite3
 from contextlib             import closing
 
-from flask                  import Flask, g
+from flask                  import Flask, g, jsonify
 from flask_mail             import Mail
 from flask_bcrypt           import Bcrypt
 from flask_socketio         import SocketIO
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
+from flask_simple_geoip     import SimpleGeoIP
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_DEFAULT_SENDER = 'matchadatingxxx@gmail.com'
@@ -19,6 +20,8 @@ SECRET_KEY = "orangepotato"
 DATABASE = 'DATABASE.db'
 TEST_DATABASE = ':memory:'
 
+GEOIPIFY_API_KEY = 'at_sriVQXPrxOME2YZsmFlt0k2i5oUBj'
+
 UPLOADED_PHOTOS_DEST = 'matcha/static/img'
 
 app = Flask(__name__)
@@ -27,6 +30,7 @@ bcrypt      = Bcrypt(app)
 mail        = Mail(app)
 socketio    = SocketIO(app)
 photos      = UploadSet('photos', IMAGES)
+simple_geoip = SimpleGeoIP(app)
 configure_uploads(app, photos)
 patch_request_class(app)
 

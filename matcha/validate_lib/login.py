@@ -1,14 +1,8 @@
 import re
 
-from flask import g, flash, redirect, url_for, request, render_template, session, current_app
+from flask import flash, redirect, url_for, session
 from matcha         import bcrypt
 from matcha.common_lib.query import query_db
-
-# def query_db(query, args=(), one=False):
-#     cur = g.db.execute(query, args)
-#     rv = [dict((cur.description[idx][0], value)
-#                for idx, value in enumerate(row)) for row in cur.fetchall()]
-#     return (rv[0] if rv else None) if one else rv
 
 
 def validate_lib_login_form(form):
