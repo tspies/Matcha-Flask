@@ -11,8 +11,9 @@ Install requirments before proceeding to Intallation Steps.
 
 ## Installation Steps:
 
-### 1. Clone Repository
-- Navigate to 
+### 1. Setting Up Source Code
+  - Navigate to https://github.com/tspies/Matcha-Flask and click the clone or download button
+  - Once the project is cloned
 Install Python Virtual Enviroment
 Run `pip install virtualenv`
 
