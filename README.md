@@ -32,7 +32,13 @@ Install requirments before proceeding to Intallation Steps.
       pip install -r requirements.txt
     ```
 ### 2. Setting Up Database
-
+  - No downloads for the Database are needed as Matcha uses the built in sqlite3 that comes with Flask<br>
+  - With your venv still running, run the following command:
+    ```bash
+      python database.py
+    ```
+    - This will cretae the database structure using schema.sql.
+    - It will then populate the database using
 Create Database:
 In terminal make ure (venv) is running, then:
 `python database.py`
