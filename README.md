@@ -37,14 +37,14 @@ Install requirments before proceeding to Intallation Steps.
     ```bash
       python database.py
     ```
-    - This will cretae the database structure using schema.sql.
-    - It will then populate the database using
-Create Database:
-In terminal make ure (venv) is running, then:
-`python database.py`
-
-Run the Flask server
-In terminal make ure (venv) is running, then:
-`python run.py` 
+    - This will create the database structure using schema.sql.
+    - It will then populate the database using populate_db.sql.
+    
+### 3. Run Matcha-Flask Server
+  - Run the following command:
+    ```bash
+      python run.py
+    ```
+  - Navigate to http://127.0.0.1:5000/ to start using Matcha
 
 
