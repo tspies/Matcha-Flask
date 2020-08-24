@@ -1,8 +1,18 @@
-# Matcha---Flask
-A dating website built using Python / Flask
+# READ ME
 
-Requirments : Python Installed.
+## Matcha---Flask
+A dating website that allows users to connect with others based on romantic preferences/interests.<br>
+Built using Python and the light-weight Flask Micro Framwork.<br>
+Install requirments before proceeding to Intallation Steps.
 
+### Requirments :
+- Python https://www.python.org/downloads/<br>
+<br>
+
+## Installation Steps:
+
+### 1. Clone Repository
+- Navigate to 
 Install Python Virtual Enviroment
 Run `pip install virtualenv`
 
