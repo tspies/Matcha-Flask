@@ -13,17 +13,25 @@ Install requirments before proceeding to Intallation Steps.
 
 ### 1. Setting Up Source Code
   - Navigate to https://github.com/tspies/Matcha-Flask and click the clone or download button
-  - Once the project is cloned
-Install Python Virtual Enviroment
-Run `pip install virtualenv`
-
-Activate Virtual Enviroment
-
---Mac
-`source venv/bin/activate`
-
---Windows
-`venv\Scripts\activate`
+  - Once the project is cloned, navigate to the inner Matcha folder.
+  - Install virtualenv using the following command in your terminal:
+  ```bash
+    pip install virtualenv
+  ```
+  - Activate your Python Venv using this command in your terminal:
+    - Mac OS
+    ```bash
+      source venv/Scripts/activate
+    ```
+    - Windows
+    ```bash
+      venv\Scripts\activate
+    ```
+  - Next install all dependancies using the following command in your terminal:
+    ```bash
+      pip install -r requirements.txt
+    ```
+### 2. Setting Up Database
 
 Create Database:
 In terminal make ure (venv) is running, then:
