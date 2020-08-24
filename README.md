@@ -46,5 +46,41 @@ Install requirments before proceeding to Intallation Steps.
       python run.py
     ```
   - Navigate to http://127.0.0.1:5000/ to start using Matcha
-
+  
+## Code Breakdown
+  - Back-end Technologies
+    - Flask
+  - Front-end Techanologies
+    - HTML
+    - CSS
+    - Javascript
+    - Boostrap
+  - Database Management Systems
+    - mysql
+    - sqlite3
+  - Folder Structure Breakdown
+    - matcha
+      - admin_lib
+        - Folder containing logic used on the admin site of Matcha.
+      - browsing_lib
+        - Folder containing logic with regard to the user movement through the website i.e: searching, user suggestions.
+      - common_lib
+        - Folder containing logic that is accessed from multiple other aprts of Matcha and its modules.
+      - notification_lib
+        - Folder containing logic that handles notifications and messages between users.
+      - static
+        - image
+          - Folder containing all images used for the website
+        - main.css
+          - Main source of CSS Styling
+        - socket.js
+          - Javascript used to handle the Socket Programming for Notifications and Messages
+      - templates
+        - Folder containing all .html files that Flask will serve as templates to the user.
+      - user_lib
+        - Folder containing logic for user logging in and signing up.
+      - validation_lib
+        - Folder conatining logic for all validation needed for Matcha, i.e: user validation, form validation etc.
+    - venv
+      - Folder with all dependencies and sources for Python Venv to run.
 
