@@ -3,6 +3,7 @@
 
 drop table if exists users;
 create table users (
+	userid integer primary key autoincrement,
     profile_pic string default('default.png'),
     pics integer default(0),
     username string not null,
@@ -27,6 +28,7 @@ create table users (
 drop table if exists interests;
 create table interests(
     id integer primary key autoincrement,
+	userid integer,
     username string not null,
     travelling  integer default(0),
     exercise    integer default(0),
@@ -37,7 +39,8 @@ create table interests(
     politics    integer default(0),
     pets        integer default(0),
     photography integer default(0),
-    sports      integer default(0)
+    sports      integer default(0),
+	foreign key(userid) references users(userid)
 );
 
 drop table if exists likes ;
@@ -57,16 +60,21 @@ create table matches(
 drop table if exists messages;
 create table messages(
     id integer primary key autoincrement,
+	userid integer,
     sender string not null,
     recipient string not null,
     message text not null,
-    timestamp string
+    timestamp string,
+	foreign key (userid) references users(userid)
     );
 
 drop table if exists images;
 create table images(
+	id integer primary key autoincrement,
+	userid integer,
     username string not null,
-    file_name string not null
+    file_name string not null,
+	foreign key (userid) references users(userid)
 );
 
 drop table if exists history;
