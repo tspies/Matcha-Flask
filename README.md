@@ -85,4 +85,19 @@ Install requirments before proceeding to Intallation Steps.
       - Folder with all dependencies and sources for Python Venv to run.
 ## Testing
   - https://github.com/wethinkcode-students/corrections_42_curriculum/blob/master/matcha.markingsheet.pdf
+  
+## Summarized Testing Plan
+  - Launch Web Server
+  - Create Account
+  - Login
+  - Edit Extended Profile
+  - Profile Suggestions
+  - Research / Filter
+  - Geolocation
+  - Fame Rating
+  - View Profile / Update
+  - Like / Unlike User
+  - Block
+  - Chat
+
 
